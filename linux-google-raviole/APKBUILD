@@ -29,6 +29,7 @@ makedepends="
 	findutils
 	xz
 	pahole
+	bpftool
 "
 
 # Source
