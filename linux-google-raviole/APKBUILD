@@ -13,13 +13,18 @@ license="GPL-2.0-only"
 options="!strip !check !tracedeps pmb:cross-native"
 makedepends="
 	bash
+	gmp-dev
 	bc
 	bison
 	devicepkg-dev
 	flex
 	openssl-dev
 	perl
+	sed
+	installkernel
 	elfutils-dev
+	openssl-dev
+	file
 	linux-headers
 	findutils
 	xz
