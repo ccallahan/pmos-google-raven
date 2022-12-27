@@ -1,0 +1,59 @@
+# Reference: <https://postmarketos.org/vendorkernel>
+# Kernel config based on: arch/arm64/configs/(CHANGEME!)
+
+pkgname=linux-google-raviole
+pkgver=5.10.136
+pkgrel=0
+pkgdesc="Google Pixel 6 Pro kernel fork"
+arch="aarch64"
+_carch="arm64"
+_flavor="google-raviole"
+url="https://kernel.org"
+license="GPL-2.0-only"
+options="!strip !check !tracedeps pmb:cross-native"
+makedepends="
+	bash
+	bc
+	bison
+	devicepkg-dev
+	flex
+	openssl-dev
+	perl
+	elfutils-dev
+	linux-headers
+	findutils
+	xz
+	pahole
+"
+
+# Source
+_repository="Kirisakura_Raviole"
+_commit="00b3ea5046e72bbf89482f99dbbce9c222e3e75e"
+_config="config-$_flavor.$arch"
+source="
+	$pkgname-$_commit.tar.gz::https://github.com/freak07/$_repository/archive/$_commit.tar.gz
+	$_config
+	"
+builddir="$srcdir/$_repository-$_commit"
+_outdir="out"
+
+prepare() {
+	default_prepare
+	REPLACE_GCCH=0 . downstreamkernel_prepare
+}
+
+build() {
+	unset LDFLAGS
+	make O="$_outdir" ARCH="$_carch" CC="${CC:-gcc}" \
+		KBUILD_BUILD_VERSION="$((pkgrel + 1 ))-postmarketOS"
+}
+
+package() {
+	downstreamkernel_package "$builddir" "$pkgdir" "$_carch" \
+		"$_flavor" "$_outdir"
+}
+
+sha512sums="
+099bd1bd11c91419ab2d9f949a55a66d9b443333ca77d967267b52c2d0a6f20549ec57505948e1c3d7931447ea036c2027de4d5148c073e343ae71700e7112b4  linux-google-raviole-00b3ea5046e72bbf89482f99dbbce9c222e3e75e.tar.gz
+5724e4e595b046a4f126aa0d3138dd7330e0843c0c71b556f08627e3cc4046bc748530d92fb914197313d792cd0075f2e8bb763275463631e6cb97a5b88b7564  config-google-raviole.aarch64
+"
